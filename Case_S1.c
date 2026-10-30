@@ -8,7 +8,6 @@
 #include "driver/gpio.h"
 
 
-
 QueueHandle_t Reading_queue;
 QueueHandle_t result_queue;
 
@@ -74,15 +73,8 @@ type arr[] = {
 
             xQueueSend(result_queue , &Result , portMAX_DELAY );
 
-
-           
-
-        }
-      
-        
+        }   
 }
-
-
 
 
 
@@ -102,6 +94,7 @@ type arr[] = {
  }
 
 
+
  int counter = 0; 
  int Correct_Cards = 0 ;
 
@@ -118,9 +111,7 @@ type arr[] = {
             xSemaphoreTake(Mutex , portMAX_DELAY);
                 oled_clear();
               oled_print("ACCESS GRANTED");
-             
            xSemaphoreGive(Mutex);
-
 
            gpio_set_level(Green_LED , 1);
            gpio_set_level(Blue_LED , 1);
@@ -161,8 +152,6 @@ type arr[] = {
               printf("Exit");
              
            xSemaphoreGive(Mutex);
-
-            
         }
     }
  }
@@ -209,32 +198,19 @@ type arr[] = {
     gpio_set_direction(Blue_LED , GPIO_MODE_OUTPUT);
     gpio_set_direction(Buzzer , GPIO_MODE_OUTPUT);
 
-
-
-
     ////////////////// ISR /////////////////////
     
- 
     gpio_set_direction(PushButton , GPIO_MODE_INPUT);
     gpio_set_pull_mode(PushButton , GPIO_PULLUP_ONLY);
     gpio_set_intr_type(PushButton , GPIO_INTR_NEGEDGE);
     gpio_install_isr_service(0);
     gpio_isr_handler_add(PushButton , button_isr , NULL);
 
-
-
-
-
-
-
     binary_Sema = xSemaphoreCreateBinary();
-    Mutex =  xSemaphoreCreateMutex();
-    
+    Mutex =  xSemaphoreCreateMutex();    
 
     Reading_queue = xQueueCreate(4 , sizeof(int));
     result_queue = xQueueCreate(4 , sizeof(result_t));
-
-     
     
    xTaskCreate(READ_RFID , "READ_RFID" , 2048 , NULL , 3 , NULL);
     xTaskCreate(Push_Button , "Push_Button" , 2048 , NULL , 5 , NULL);
@@ -242,4 +218,3 @@ type arr[] = {
        xTaskCreate(State , "State" , 2048 , NULL , 1 , NULL);
 
 }
-
